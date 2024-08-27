@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: feature-toggle-demo
+  security:
+    user:
+      name: ${SECURITY_USERNAME:admin}
+      password: ${SECURITY_PASSWORD:Test123}
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/simple_rest}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:pgadmin}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  port: ${SERVER_PORT:8989}
+  servlet:
+    context-path: /app
+
+logging:
+  level: {SECURITY_LOG_LEVEL:ERROR}
+  pattern:
+    console: ${CONSOLE_LOG_PATTERN:%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n}
+
+togglz:
+  console:
+    enabled: true
+    path: /togglz-console
+#  features-file: file:C:/config/featureToggle.yml
+#  feature-enums: com.aptota.featuretoggle.config.FeatureFlags
+#  table-name: rb_feature_toggles
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: togglz
