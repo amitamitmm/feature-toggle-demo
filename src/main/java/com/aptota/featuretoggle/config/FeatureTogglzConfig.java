@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.togglz.core.manager.EnumBasedFeatureProvider;
+import org.togglz.core.manager.FeatureManager;
+import org.togglz.core.manager.FeatureManagerBuilder;
 import org.togglz.core.repository.StateRepository;
 import org.togglz.core.repository.cache.CachingStateRepository;
 import org.togglz.core.repository.jdbc.JDBCStateRepository;
@@ -21,6 +23,12 @@ public class FeatureTogglzConfig {
 
     private final DataSource dataSource;
 
+    @Value("${togglz.table-name}")
+    private String featureTogglesTableName;
+
+    @Value("${togglz.cache-enable}")
+    private Boolean featureTogglesCacheEnable;
+
     @Bean
     public UserProvider userProvider() {
         return new UserProvider() {
@@ -33,16 +41,18 @@ public class FeatureTogglzConfig {
 
     @Bean
     public FeatureProvider featureProvider() {
-        return new EnumBasedFeatureProvider(FeatureFlags.class);
+        return new EnumBasedFeatureProvider(BeFeatureFlags.class, FeFeatureFlags.class);
     }
 
     @Bean
     public StateRepository getStateRepository() {
-        //return new JDBCStateRepository(dataSource, "rb_feature_toggles");
         JDBCStateRepository jdbcStateRepository = new JDBCStateRepository.Builder(dataSource)
                 .tableName("rb_feature_toggles")
                 .build();
-        // Wrap JDBCStateRepository with CachingStateRepository
-        return new CachingStateRepository(jdbcStateRepository);
+        if(featureTogglesCacheEnable){
+            return new CachingStateRepository(jdbcStateRepository);
+        }
+        return jdbcStateRepository;
     }
+
 }

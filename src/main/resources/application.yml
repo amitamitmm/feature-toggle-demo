@@ -34,7 +34,8 @@ togglz:
     path: /togglz-console
 #  features-file: file:C:/config/featureToggle.yml
 #  feature-enums: com.aptota.featuretoggle.config.FeatureFlags
-#  table-name: rb_feature_toggles
+  table-name: rb_feature_toggles
+  cache-enable: false
 
 management:
   endpoints:
